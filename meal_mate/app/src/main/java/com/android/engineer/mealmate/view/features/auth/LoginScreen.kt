@@ -1,5 +1,6 @@
 package com.android.engineer.mealmate.view.features.auth
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -34,10 +36,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.android.engineer.mealmate.view.utils.constants.nav.AuthScreen
 import com.android.engineer.mealmate.R
+import com.android.engineer.mealmate.data.auth_db.AppDatabase
+import com.android.engineer.mealmate.data.auth_db.AuthViewModel
 import com.android.engineer.mealmate.ui.theme.OrangeOnPrimary
 import com.android.engineer.mealmate.view.utils.custom_views.MealFilledButton
 import com.android.engineer.mealmate.view.utils.custom_views.MealText
@@ -46,6 +51,9 @@ import com.android.engineer.mealmate.view.utils.constants.nav.graph.DASHBOARD
 
 @Composable
 fun LoginScreen(navHostController: NavHostController) {
+    val database = AppDatabase.getAppDatabase(context = LocalContext.current)
+    val viewModel: AuthViewModel = viewModel {AuthViewModel(database)}
+
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -118,7 +126,14 @@ fun LoginScreen(navHostController: NavHostController) {
 //                        }
 //                        Spacer(modifier = Modifier.height(26.dp))
                         MealFilledButton(
-                            onClick = { navHostController.navigate(route = DASHBOARD) },
+                            onClick = {
+                                viewModel.loginUser(
+                                    username = "test",
+                                    password = "test@123",
+                                    onLoginSuccess = {navHostController.navigate(route = DASHBOARD)},
+                                    onLoginError = { Log.e("LoginMessage", "Login Error")}
+                                )
+                            },
                             text = stringResource(id = R.string.login),
                             modifier = Modifier.fillMaxWidth(),
                             horizontalPadding = 8.dp

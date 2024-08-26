@@ -1,5 +1,6 @@
 package com.android.engineer.mealmate.view.features.auth
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,14 +27,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.android.engineer.mealmate.R
+import com.android.engineer.mealmate.data.auth_db.AppDatabase
+import com.android.engineer.mealmate.data.auth_db.AuthViewModel
+import com.android.engineer.mealmate.data.auth_db.UserTable
 import com.android.engineer.mealmate.ui.theme.OrangeOnPrimary
 import com.android.engineer.mealmate.view.utils.constants.nav.AuthScreen
 import com.android.engineer.mealmate.view.utils.constants.nav.graph.DASHBOARD
@@ -43,6 +49,8 @@ import com.android.engineer.mealmate.view.utils.custom_views.MealTextField
 
 @Composable
 fun SignupScreen(navHostController: NavHostController) {
+    val database = AppDatabase.getAppDatabase(context = LocalContext.current)
+    val viewModel: AuthViewModel = viewModel { AuthViewModel(database) }
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -115,7 +123,14 @@ fun SignupScreen(navHostController: NavHostController) {
                         )
                         Spacer(modifier = Modifier.height(32.dp))
                         MealFilledButton(
-                            onClick = { navHostController.navigate(route = DASHBOARD) },
+                            onClick = {
+                                val user = UserTable(0,"test", "Md", "Arbaaz", "mdarbaaz@gmail.com", "test@123", "7890")
+                                viewModel.signupUser(
+                                    user = user,
+                                    onSignupSuccess = { navHostController.navigate(route = DASHBOARD) },
+                                    onSignupError = { Log.e("Signup Message", "Signup Error") }
+                                )
+                            },
                             text = stringResource(id = R.string.sign_up),
                             modifier = Modifier.fillMaxWidth(),
                             horizontalPadding = 8.dp
@@ -133,9 +148,7 @@ fun SignupScreen(navHostController: NavHostController) {
                                 modifier = Modifier.clickable { navHostController.navigate(
                                     AuthScreen.Login.route) }
                             )
-
                         }
-
                     }
                 }
             }
