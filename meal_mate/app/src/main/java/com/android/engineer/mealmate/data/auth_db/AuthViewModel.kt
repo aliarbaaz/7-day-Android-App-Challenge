@@ -5,10 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
-class AuthViewModel(database: AppDatabase) : ViewModel() {
+class AuthViewModel(database: MealUserDatabase) : ViewModel() {
     private val userRepository = UserRepository(database.userDao())
 
-    fun signupUser(user: UserTable, onSignupSuccess: () -> Unit, onSignupError: () -> Unit) {
+    fun signupUser(user: User, onSignupSuccess: () -> Unit, onSignupError: () -> Unit) {
         viewModelScope.launch {
             try {
                 val result = userRepository.insertUser(user)

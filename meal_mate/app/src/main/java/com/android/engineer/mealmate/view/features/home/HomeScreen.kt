@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.android.engineer.mealmate.R
 import com.android.engineer.mealmate.data.utils.DURATION
@@ -30,15 +30,15 @@ import com.android.engineer.mealmate.data.utils.SERVES
 import com.android.engineer.mealmate.ui.theme.OrangeOnPrimary
 import com.android.engineer.mealmate.ui.theme.OrangePrimary
 import com.android.engineer.mealmate.data.utils.STATIC_BREAK_FAST_IMAGE
-import com.android.engineer.mealmate.view.utils.custom_views.MealIconButton
 import com.android.engineer.mealmate.view.utils.custom_views.MealImageLoading
+import com.android.engineer.mealmate.view.utils.custom_views.MealLottieAnimation
 import com.android.engineer.mealmate.view.utils.custom_views.MealSearchView
 import com.android.engineer.mealmate.view.utils.custom_views.MealText
 
 @Composable
-fun HomeScreen(navHostController: NavHostController, userName: String, paddingValues: PaddingValues) {
-    val viewModel = viewModel<RecipeViewModel>()
-
+fun HomeScreen(navHostController: NavHostController, paddingValues: PaddingValues) {
+    val viewModel = hiltViewModel<RecipeViewModel>()
+    val loggedInUserName = viewModel.loggedInUserName.value
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -47,20 +47,24 @@ fun HomeScreen(navHostController: NavHostController, userName: String, paddingVa
             .padding(all = 28.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        ShowTopView(userName = userName)
-        Spacer(modifier = Modifier
-            .fillMaxWidth()
-            .height(15.dp))
-        if(viewModel.isShowNextMealView.value) {
-            ShowNextMeal()
+
+        if (viewModel.isScreenLoading.value) {
+            MealLottieAnimation(rawResId = R.raw.loading_animation, imageSize = 200.dp)
+        } else {
+            ShowTopView(userName = loggedInUserName)
+            Spacer(modifier = Modifier
+                .fillMaxWidth()
+                .height(15.dp))
+            if(viewModel.isShowNextMealView.value) {
+                ShowNextMeal()
+            }
+            Spacer(modifier = Modifier
+                .fillMaxWidth()
+                .height(15.dp))
+            MealSearchView(
+                navHostController = navHostController
+            )
         }
-        Spacer(modifier = Modifier
-            .fillMaxWidth()
-            .height(15.dp))
-        MealSearchView(
-            viewModel = viewModel,
-            navHostController = navHostController
-        )
     }
 }
 
@@ -72,13 +76,14 @@ fun ShowTopView(userName: String) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        MealText(text = stringResource(id = R.string.hello).plus(", ").plus(userName), fontSize = 30.sp)
-        MealIconButton(
+        MealText(text = stringResource(id = R.string.hello).plus(" ").plus(userName).plus(","), fontSize = 30.sp)
+        // This feature is disabled.
+        /*MealIconButton(
             onClick = {},
             text = stringResource(id = R.string.meal_card),
             icon = R.drawable.ic_meal_card,
             horizontalPadding = 0.dp
-        )
+        )*/
     }
 }
 

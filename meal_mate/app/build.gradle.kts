@@ -1,7 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    id("kotlin-kapt")
+    // other plugins - order is important
+    kotlin("kapt")
+    alias(libs.plugins.dagger.hilt.android)
 }
 
 android {
@@ -77,13 +79,32 @@ dependencies {
     // Lottie Animation
     implementation(libs.lottie.compose)
 
-    // Lifecycle Viewmodel
+    // Lifecycle Viewmodel Compose
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
     // Extended Icons
     implementation(libs.androidx.material.icons.extended)
 
     implementation(libs.androidx.core.splashscreen)
+
+    // Dagger - Hilt
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
+    kapt(libs.hilt.android.compiler)
+    kapt(libs.androidx.hilt.compiler)
+
+    // Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.logging.interceptor)
+    implementation(libs.okhttp)
+
+    // Moshi
+    implementation(libs.moshi)
+    implementation(libs.moshi.kotlin)
+    implementation(libs.converter.moshi)
+
+    // Data Store
+    implementation(libs.androidx.datastore.preferences)
 
     // RoomDB
     implementation(libs.androidx.room.runtime)
@@ -96,4 +117,8 @@ dependencies {
 
     // To use Kotlin annotation processing tool (kapt)
     kapt(libs.androidx.room.compiler)
+}
+
+kapt {
+    correctErrorTypes = true
 }

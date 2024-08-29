@@ -5,19 +5,19 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import android.content.Context
 
-@Database(entities = [UserTable::class], version = 1)
-abstract class AppDatabase : RoomDatabase() {
+@Database(entities = [User::class], version = 1)
+abstract class MealUserDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
 
     companion object {
         @Volatile
-        private var INSTANCE: AppDatabase? = null
-        fun getAppDatabase(context: Context): AppDatabase {
+        private var INSTANCE: MealUserDatabase? = null
+        fun getAppDatabase(context: Context): MealUserDatabase {
             if(INSTANCE == null) {
                 synchronized(this) {
                     INSTANCE = Room.databaseBuilder(
                         context.applicationContext,
-                        AppDatabase::class.java,
+                        MealUserDatabase::class.java,
                         "authenticationDB"
                     ).build()
                 }
